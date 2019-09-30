@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import {
   Image,
   Platform,
@@ -10,11 +10,12 @@ import {
   TextInput,
 } from 'react-native';
 import InputForm from '../components/FormInput';
+import OutputTable from '../components/OutputTable';
 
 const HomeScreen = () => {
   const [state, setState] = useState(null);
 
-  const onFormSubmit = (values) => {
+  const updateState = (values) => {
     setState(values);
   };
   return (
@@ -27,8 +28,8 @@ const HomeScreen = () => {
           style={styles.welcomeImage}
           source={require('../assets/images/splash.png')} />
       </View>
-      <InputForm onSubmit={onFormSubmit}/>
-      {/* { state && <OutputTable /> } */}
+      <InputForm onSubmit={updateState}/>
+      { state && <OutputTable inputTable={state} resetState={updateState}/>}
     </ScrollView>
   </View>
 )};

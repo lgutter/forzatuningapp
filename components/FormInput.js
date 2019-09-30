@@ -43,7 +43,7 @@ export default class InputForm extends Component {
   onPress = () => {
     var value = this.refs.form.getValue();
     if (value) {
-      this.props.onSubmit(value); // value here is an instance of Person
+      this.props.onSubmit(value);
     }
   }
 
