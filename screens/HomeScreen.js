@@ -1,5 +1,4 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   Platform,
@@ -10,26 +9,29 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import { MonoText } from '../components/StyledText';
-import InputForm from './FormInput';
+import InputForm from '../components/FormInput';
 
-export default function HomeScreen() {
+const HomeScreen = () => {
+  const [state, setState] = useState(null);
+
+  const onFormSubmit = (values) => {
+    setState(values);
+  };
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            style={styles.welcomeImage}
-            source={require('../assets/images/splash.png')}/>
-        </View>
-            <InputForm/>
-            {/* <OutputTable/> */}
-      </ScrollView>
-    </View>
-  );
-}
+  <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}>
+      <View style={styles.welcomeContainer}>
+        <Image
+          style={styles.welcomeImage}
+          source={require('../assets/images/splash.png')} />
+      </View>
+      <InputForm onSubmit={onFormSubmit}/>
+      {/* { state && <OutputTable /> } */}
+    </ScrollView>
+  </View>
+)};
 
 HomeScreen.navigationOptions = {
   header: null,
@@ -59,20 +61,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
-  inputField: {
-    flex: 5,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
   getStartedText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
@@ -83,3 +71,5 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+export default HomeScreen;
