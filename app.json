@@ -25,6 +25,12 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+      "android": {
+        "package": "gutter.liewe.forzaBasicTuningApp",
+        "versionCode": 191001,
+        "icon": "./assets/images/icon.png",
+        "permissions": []
     }
   }
 }

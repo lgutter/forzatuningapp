@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import {
   Image,
   Platform,
@@ -9,14 +9,66 @@ import {
   View,
   TextInput,
 } from 'react-native';
+import { DataTable } from 'react-native-paper';
 
-const OutputTable = (input) => {
-  console.log(input);
+const BumpStiffness = ({ resultFront, resultRear }) => {
+  return (
+    <DataTable.Row key='bump'>
+      <DataTable.Cell>Bump</DataTable.Cell>
+      <DataTable.Cell numeric>{Math.round(resultFront * 6) / 10}</DataTable.Cell>
+      <DataTable.Cell numeric>{Math.round(resultRear * 6) / 10}</DataTable.Cell>
+    </DataTable.Row>
+  );
+}
+
+const NormalStiffness = ({ item, resultFront, resultRear }) => {
+  return (
+    <DataTable.Row key={item}>
+      <DataTable.Cell>{item}</DataTable.Cell>
+      <DataTable.Cell numeric>{Math.round(resultFront * 10) / 10}</DataTable.Cell>
+      <DataTable.Cell numeric>{Math.round(resultRear * 10) / 10}</DataTable.Cell>
+    </DataTable.Row>
+  );
+}
+
+const OutputTable = ({ inputTable, resetState }) => {
+  console.log(inputTable, resetState);
+  onPress = (change) => {
+    resetState(null);
+  }
+
+  const types = ['Springs', 'Rebound', 'AntirollBars'];
+
+  const calc = (min, max, weight) => {
+    return ((max - min) * weight / 100 + min);
+  };
+
+  var rearWeightDistribution = (100 - inputTable.weightDistribution);
+
   return (
     <View style={styles.container}>
-      <Text>HOI!</Text>
-      <Text>{input.inputTable.minSprings}</Text>
-      <TouchableHighlight style={styles.button} onPress={input.resetState('hoi')} underlayColor='#99d9f4'>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Setting</DataTable.Title>
+          <DataTable.Title>Front</DataTable.Title>
+          <DataTable.Title>Rear</DataTable.Title>
+        </DataTable.Header>
+        {types.map((item) => {
+          const resultFront = calc(inputTable[`min${item}`], inputTable[`max${item}`], inputTable.weightDistribution);
+          const resultRear = calc(inputTable[`min${item}`], inputTable[`max${item}`], rearWeightDistribution);
+
+          if (item == 'Rebound'){
+            var result = <><NormalStiffness item={item} resultFront={resultFront} resultRear={resultRear} />
+            <BumpStiffness resultFront={resultFront} resultRear={resultRear} /></>
+          }
+          else {
+            var result = <NormalStiffness item={item} resultFront={resultFront} resultRear={resultRear} />
+          }
+console.log(result);
+          return (result);
+        })}
+      </DataTable>
+      <TouchableHighlight style={styles.button} onPress={onPress} underlayColor='#99D9F4'>
         <Text style={styles.buttonText}>Reset</Text>
       </TouchableHighlight>
     </View>
@@ -37,8 +89,8 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 36,
-    backgroundColor: '#48BBEC',
-    borderColor: '#48BBEC',
+    backgroundColor: '#E04E43',
+    borderColor: '#C4392F',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -48,28 +100,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 10,
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 200,
-    height: 125,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
   inputContainer: {
     alignContent: 'center',
     flexDirection: 'row',
     backgroundColor: '#fff',
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
   },
   navigationFilename: {
     marginTop: 5,

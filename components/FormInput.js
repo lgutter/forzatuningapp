@@ -1,74 +1,75 @@
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import { View, StyleSheet, TouchableHighlight, Text } from 'react-native';
 
 import t from 'tcomb-form-native';
+import { statement } from '@babel/template';
 
-const Form = t.form.Form;
 
-const Defaults = t.struct({
-  minSprings: t.Number,
-  maxSprings: t.Number,
-  minRebound: t.maybe(t.Number),
-  maxRebound: t.maybe(t.Number),
-  minAntirollBars: t.maybe(t.Number),
-  maxAntirollBars: t.maybe(t.Number),
-});
+const InputForm = ({ onSubmit, state }) => {
+  const formEl = useRef(null);
 
-var options = {
-  label: 'Your Car\'s min/max values',
-  auto: 'placeholders',
-  fields: {
-    minRebound: {
-      placeholder: 'Min rebound (default 3)'
-    },
-    maxRebound: {
-      placeholder: 'Max rebound (default 20)'
-    },
-    minSprings: {
-      error: 'please provide the minimum spring stiffness'
-    },
-    maxSprings: {
-      error: 'please provide the maximum spring stiffness'
-    },
-    minAntirollBars: {
-      placeholder: 'Min antiroll bars (default 1)'
-    },
-    maxAntirollBars: {
-      placeholder: 'Max antiroll bars (default 65)'
-    },
+  const Form = t.form.Form;
+
+  var Defaults = t.struct({
+    minSprings: t.Number,
+    maxSprings: t.Number,
+    minRebound: t.Number,
+    maxRebound: t.Number,
+    minAntirollBars: t.Number,
+    maxAntirollBars: t.Number,
+    weightDistribution: t.Number,
+  });
+
+  var options = {
+
+  };
+
+  const defaultValues = {
+    minRebound: 3,
+    maxRebound: 20,
+    minAntirollBars: 1,
+    maxAntirollBars: 65,
   }
-};
 
-export default class InputForm extends Component {
-  onPress = () => {
-    var value = this.refs.form.getValue();
-    if (value) {
-      this.props.onSubmit(value);
+  const onPress = () => {
+    if (formEl && formEl.current) {
+      var value = formEl.current.getValue();
+      if (value) {
+        onSubmit(value);
+      }
     }
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Form
-          ref="form"
-          type={Defaults}
-          options={options}
-        />
-        <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>Calculate</Text>
-        </TouchableHighlight>
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      {/* <Text style={styles.title}>Please pro</Text> */}
+      <Form
+        ref={formEl}
+        type={Defaults}
+        options={options}
+        value={{
+          ...defaultValues,
+          ...state,
+        }}
+      />
+      <TouchableHighlight style={styles.button} onPress={onPress} underlayColor='#99d9f4'>
+        <Text style={styles.buttonText}>Calculate</Text>
+      </TouchableHighlight>
+    </View>
+  );
 }
+
+t.form.Form.stylesheet.textbox.normal.width = 175;
+t.form.Form.stylesheet.textbox.error.width = 175;
+t.form.Form.stylesheet.fieldset.justifyContent = 'space-around';
+t.form.Form.stylesheet.fieldset.flexDirection = 'row';
+t.form.Form.stylesheet.fieldset.flexWrap = 'wrap';
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     marginTop: 0,
     padding: 20,
-    backgroundColor: '#ffffff',
   },
   buttonText: {
     fontSize: 18,
@@ -84,5 +85,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'stretch',
     justifyContent: 'center'
+  },
+  title: {
+    fontSize: 24,
+    color: 'rgba(96,100,109, 1)',
+    lineHeight: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
   }
 });
+
+export default InputForm;

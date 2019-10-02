@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useRef, useEffect } from 'react';
 import {
   Image,
   Platform,
@@ -14,25 +14,40 @@ import OutputTable from '../components/OutputTable';
 
 const HomeScreen = () => {
   const [state, setState] = useState(null);
+  const scrollViewEl = useRef(null);
 
   const updateState = (values) => {
     setState(values);
   };
+
+  useEffect(() => {
+    if (state) {
+      if (scrollViewEl && scrollViewEl.current) {
+        scrollViewEl.current.scrollToEnd({ animated: true });
+      }
+    }
+  }, [state]);
+
   return (
-  <View style={styles.container}>
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <View style={styles.welcomeContainer}>
-        <Image
-          style={styles.welcomeImage}
-          source={require('../assets/images/splash.png')} />
-      </View>
-      <InputForm onSubmit={updateState}/>
-      { state && <OutputTable inputTable={state} resetState={updateState}/>}
-    </ScrollView>
-  </View>
-)};
+    <View style={styles.container}>
+      <ScrollView
+
+        ref={scrollViewEl}
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}>
+        <View style={styles.welcomeContainer}>
+          <Image
+            style={styles.welcomeImage}
+            source={require('../assets/images/splash.png')} />
+        </View>
+        <View style={styles.inputContainer}>
+          <InputForm onSubmit={updateState} state={state} />
+          {state && <OutputTable inputTable={state} resetState={updateState} />}
+        </View>
+      </ScrollView>
+    </View>
+  )
+};
 
 HomeScreen.navigationOptions = {
   header: null,
@@ -59,7 +74,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignContent: 'center',
-    flexDirection: 'row',
+    alignSelf: 'center',
     backgroundColor: '#fff',
   },
   getStartedText: {
